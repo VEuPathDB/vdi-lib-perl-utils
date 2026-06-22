@@ -1,9 +1,32 @@
-package EncodingDetect;
+package CopyAndCleanTextFile;
 
 use strict;
 use Exporter;
 our @ISA = 'Exporter';
-our @EXPORT = qw(detectFileEncoding);
+our @EXPORT = qw(detectFileEncoding copyAndCleanTextFile);
+
+sub copyAndCleanTextFile {
+  my ($inputPath, $outputPath) = @_;
+  
+  # For text files, detect encoding and convert to UTF-8
+  my $encoding = detectFileEncoding($inputPath);
+
+  # Open input with detected encoding, output as UTF-8
+  open(my $in_fh, "<:encoding($encoding)", $inputPath)
+    or die "Cannot open input file '$inputPath' with encoding $encoding: $!\n";
+  open(my $out_fh, ">:encoding(UTF-8)", $outputPath)
+    or die "Cannot open output file '$outputPath' for UTF-8 writing: $!\n";
+
+  # Copy line by line, normalizing line endings
+  while (my $line = <$in_fh>) {
+    $line =~ s/\r\n/\n/g;  # Convert Windows CRLF to Unix LF
+    $line =~ s/\r/\n/g;    # Convert old Mac CR to Unix LF
+    print $out_fh $line;
+  }
+
+  close($in_fh);
+  close($out_fh);
+}
 
 # ---------------------------------------------------------------------------
 # Mirrors study-wrangler's detect_file_encoding() in R: check for UTF-16 via
