@@ -21,6 +21,7 @@ sub copyAndCleanTextFile {
   while (my $line = <$in_fh>) {
     $line =~ s/\r\n/\n/g;  # Convert Windows CRLF to Unix LF
     $line =~ s/\r/\n/g;    # Convert old Mac CR to Unix LF
+    $line =~ s/^\x{FEFF}//; # Remove BOM
     print $out_fh $line;
   }
 
