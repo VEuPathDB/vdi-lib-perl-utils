@@ -19,9 +19,10 @@ sub copyAndCleanTextFile {
 
   # Copy line by line, normalizing line endings
   while (my $line = <$in_fh>) {
+    next if $line =~ /^\s$/; # excise empty lines
+    $line =~ s/^\x{FEFF}//; # Remove BOM
     $line =~ s/\r\n/\n/g;  # Convert Windows CRLF to Unix LF
     $line =~ s/\r/\n/g;    # Convert old Mac CR to Unix LF
-    $line =~ s/^\x{FEFF}//; # Remove BOM
     print $out_fh $line;
   }
 
