@@ -41,7 +41,8 @@ sub getRefGenome {
   my $metadata = getMetadata($metaJsonFile);
   my $dependencies = $metadata->{dependencies};
 
-  validationError("More than one reference genome") unless ($dependencies && @$dependencies == 1);
+  validationError("Must be exactly one reference genome, not " . scalar(@{ $dependencies || [] }))
+      unless ($dependencies && @$dependencies == 1);
 
   my $genomeIdentifier = $dependencies->[0]->{resourceIdentifier};
 
